@@ -8,16 +8,17 @@ import ActivityList from "./ActivityList";
 interface Props {
     activities: Activity[];
     selectedActivity: Activity | undefined;
+    editMode: boolean;
+    submitting: boolean;
     selectActivity: (id: string) => void;
     cancelSelectActivity: () => void;
-    editMode: boolean;
     openForm: (id?: string) => void;
     closeForm: () => void;
     createOrEdit: (activity: Activity) => void;
     deleteActivity: (id: string) => void;
 }
 
-function ActivityDashboard ({activities, selectedActivity, deleteActivity,
+function ActivityDashboard ({activities, selectedActivity, deleteActivity, submitting,
         selectActivity, cancelSelectActivity, editMode, openForm, closeForm, createOrEdit}: Props) {
     return (
         <Grid>
@@ -25,19 +26,25 @@ function ActivityDashboard ({activities, selectedActivity, deleteActivity,
                 <ActivityList 
                     activities={activities} 
                     selectActivity={selectActivity}
-                    deleteActivity={deleteActivity} />
+                    deleteActivity={deleteActivity}
+                    submitting={submitting} />
             </Grid.Column>
             
             <Grid.Column width={6}>
                 {selectedActivity && !editMode &&
-                    <ActivityDetails 
-                        activity={selectedActivity} 
-                        cancelSelectActivity={cancelSelectActivity}
-                        openForm={openForm} />}
-                {editMode && <ActivityForm 
+                <ActivityDetails 
+                    activity={selectedActivity} 
+                    cancelSelectActivity={cancelSelectActivity}
+                    openForm={openForm} />
+                }
+                
+                {editMode && 
+                <ActivityForm 
                     closeForm={closeForm}
                     activity={selectedActivity}
-                    createOrEdit={createOrEdit} />}
+                    createOrEdit={createOrEdit}
+                    submitting={submitting} />
+                }
             </Grid.Column>
         </Grid>
     );
