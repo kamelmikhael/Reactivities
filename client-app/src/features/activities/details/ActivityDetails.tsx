@@ -1,4 +1,6 @@
-import React from "react";
+import { observer } from "mobx-react-lite";
+import React, { useEffect } from "react";
+import { Link, useParams } from "react-router-dom";
 import { Button, Card, Image } from "semantic-ui-react";
 import Spinner from "../../../app/layout/Spinner";
 import { useStore } from "../../../app/stores/store";
@@ -6,9 +8,17 @@ import { useStore } from "../../../app/stores/store";
 function ActivityDetails() {
     
     const {activityStore} = useStore();
-    const {selectedActivity: activity, openForm, cancelSelectActivity} = activityStore;
+    const {selectedActivity: activity, loadActivity, loadingInitial} = activityStore;
+
+    const {id} = useParams<{id: string}>();
+
+    useEffect(() => {
+        if(id) {
+            loadActivity(id);
+        }
+    }, [id, loadActivity]);
     
-    if(!activity) return <Spinner />;
+    if(loadingInitial || !activity) return <Spinner />;
     
     return (
         <Card fluid>
@@ -24,12 +34,12 @@ function ActivityDetails() {
             </Card.Content>
             <Card.Content extra>
                <Button.Group widths={2}>
-                    <Button onClick={() => openForm(activity?.id)} basic color="blue" content="Edit" />
-                    <Button onClick={() => cancelSelectActivity()} basic color="grey" content="Cancel" />
+                    <Button as={Link} to={`/manage/${activity?.id}`} basic color="blue" content="Edit" />
+                    <Button as={Link} to='/activities' basic color="grey" content="Cancel" />
                 </Button.Group> 
             </Card.Content>
         </Card>
     );
 }
 
-export default ActivityDetails;
+export default observer(ActivityDetails);

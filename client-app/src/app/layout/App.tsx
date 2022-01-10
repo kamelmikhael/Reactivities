@@ -1,28 +1,35 @@
-import React, { Fragment, useEffect } from 'react';
-import { Container } from 'semantic-ui-react';
-import NavBar from './NavBar';
-import ActivityDashboard from '../../features/activities/dashboard/ActivityDashboard';
-import Spinner from './Spinner';
-import { useStore } from '../stores/store';
+import React, { Fragment } from 'react';
 import { observer } from 'mobx-react-lite';
+import { Route, useLocation } from 'react-router-dom';
+// Pages
+import NavBar from './NavBar';
+import { Container } from 'semantic-ui-react';
+import ActivityDashboard from '../../features/activities/dashboard/ActivityDashboard';
+import HomePage from '../../features/home/HomePage';
+import ActivityForm from '../../features/activities/form/ActivityForm';
+import ActivityDetails from '../../features/activities/details/ActivityDetails';
 
 function App() {
-
-  const {activityStore} = useStore();
-
-  useEffect(() => {
-    activityStore.loadActivities();
-  }, [activityStore]);
-
-  if(activityStore.loadingInitial) return <Spinner content='Loading App' />
+  const location = useLocation();
 
   return (
     <Fragment>
-      <NavBar />
+      <Route exact path='/' component={HomePage} />
 
-      <Container style={{marginTop: '7em'}}>
-        <ActivityDashboard />
-      </Container>
+      <Route 
+        path={'/(.+)'}
+        render={() => (
+          <Fragment>      
+          <NavBar />
+          <Container style={{marginTop: '7em'}}>
+            <Route exact path='/activities' component={ActivityDashboard} />
+            <Route exact path='/activities/:id' component={ActivityDetails} />
+            <Route key={location.key} path={['/create-activity', '/manage/:id']} component={ActivityForm} />
+            {/* <Route path='*' component={HomePage} /> */}
+          </Container>
+          </Fragment>
+        )}
+      />
     </Fragment>
   );
 }
