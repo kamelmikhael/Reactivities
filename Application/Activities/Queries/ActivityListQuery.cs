@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Application.Core;
 using Application.Dtos;
 using AutoMapper;
 using MediatR;
@@ -9,10 +10,10 @@ using Persistence;
 
 namespace Application.Activities.Queries
 {
-    public class ActivityListQuery : IRequest<List<ActivityDto>>
+    public class ActivityListQuery : IRequest<Result<List<ActivityDto>>>
     {}
 
-    public class ActivityListQueryHandler : IRequestHandler<ActivityListQuery, List<ActivityDto>>
+    public class ActivityListQueryHandler : IRequestHandler<ActivityListQuery, Result<List<ActivityDto>>>
     {
         private readonly DataContext _context;
         private readonly IMapper _mapper;
@@ -23,11 +24,10 @@ namespace Application.Activities.Queries
             _mapper = mapper;
         }
 
-        public async Task<List<ActivityDto>> Handle(ActivityListQuery request, CancellationToken cancellationToken)
+        public async Task<Result<List<ActivityDto>>> Handle(ActivityListQuery request, CancellationToken cancellationToken)
         {
             var activities = await _context.Activities.ToListAsync(cancellationToken);
-            var activitiesDto = _mapper.Map<List<ActivityDto>>(activities);
-            return activitiesDto;
+            return Result<List<ActivityDto>>.Success(_mapper.Map<List<ActivityDto>>(activities));
         }
     }
 }

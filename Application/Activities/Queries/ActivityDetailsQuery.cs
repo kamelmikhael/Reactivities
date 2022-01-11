@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Application.Core;
 using Application.Dtos;
 using Application.Exceptions;
 using AutoMapper;
@@ -9,12 +10,12 @@ using Persistence;
 
 namespace Application.Activities.Queries
 {
-    public class ActivityDetailsQuery : IRequest<ActivityDto> 
+    public class ActivityDetailsQuery : IRequest<Result<ActivityDto>> 
     {
         public Guid Id { get; set; }
     }
 
-    public class ActivityDetailsQueryHandler : IRequestHandler<ActivityDetailsQuery, ActivityDto>
+    public class ActivityDetailsQueryHandler : IRequestHandler<ActivityDetailsQuery, Result<ActivityDto>>
     {
         private readonly DataContext _context;
         private readonly IMapper _mapper;
@@ -25,15 +26,11 @@ namespace Application.Activities.Queries
             _mapper = mapper;
         }
 
-        public async Task<ActivityDto> Handle(ActivityDetailsQuery request, CancellationToken cancellationToken)
+        public async Task<Result<ActivityDto>> Handle(ActivityDetailsQuery request, CancellationToken cancellationToken)
         {
-            var activity = await _context.Activities.FindAsync(request.Id);  
-            if(activity is null) 
-            {
-                throw new NotFounException($"Activity with Id = {request.Id} can not be found!");
-            }
+            var activity = await _context.Activities.FindAsync(request.Id);
             var activityDto = _mapper.Map<ActivityDto>(activity);
-            return activityDto;
+            return Result<ActivityDto>.Success(activityDto);
         }
     }
 }
