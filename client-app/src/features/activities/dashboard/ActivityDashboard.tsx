@@ -15,7 +15,7 @@ function ActivityDashboard () {
         if(activityRegistry.size <= 1) loadActivities();
     }, [loadActivities, activityRegistry]);
 
-    if(activityStore.loadingInitial) return <Spinner content='Loading App' />
+    if(activityStore.loadingInitial) return <Spinner content='Loading Actiivities...' />
 
     return (
         <Grid>

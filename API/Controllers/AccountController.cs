@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using API.DTOs;
@@ -48,11 +45,13 @@ namespace API.Controllers
         {
             if (await _userManager.Users.AnyAsync(x => x.Email == registerDto.Email))
             {
-                return BadRequest("Email taken");
+                ModelState.AddModelError("Email", "Email taken");
+                return ValidationProblem();
             }
             if (await _userManager.Users.AnyAsync(x => x.UserName == registerDto.Username))
             {
-                return BadRequest("Username taken");
+                ModelState.AddModelError("Username", "Username taken");
+                return ValidationProblem();
             }
 
             var user = new AppUser
@@ -64,7 +63,10 @@ namespace API.Controllers
 
             var result = await _userManager.CreateAsync(user, registerDto.Password);
 
-            if (!result.Succeeded) return BadRequest("Failed in user registration.");
+            if (!result.Succeeded) {
+                ModelState.AddModelError("", "Failed in user registration.");
+                return ValidationProblem();
+            }
             
             return CreateUserDto(user);
         }
