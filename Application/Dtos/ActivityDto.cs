@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using Application.Profiles;
 
 namespace Application.Dtos
 {
@@ -11,5 +13,8 @@ namespace Application.Dtos
         public string City { get; set; }
         public string Venue { get; set; }
         public DateTime Date { get; set; }
+        public bool IsCancelled { get; set; }
+        public string HostUsername { get; set; }
+        public ICollection<Profile> Attendees { get; set; }
     }
 }

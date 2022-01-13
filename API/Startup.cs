@@ -2,7 +2,9 @@ using API.Extensions;
 using API.Middleware;
 using Application;
 using Application.Activities.Commands;
+using Application.Interfaces;
 using FluentValidation.AspNetCore;
+using Infrastructure.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -43,6 +45,8 @@ namespace API
                 optopns.UseSqlite(_config.GetConnectionString("DefaultConnection"));
             });
             services.AddCors();
+
+            services.AddScoped<IUserAccessor, UserAccessor>();
             
             services.AddApplicationLayer();
             services.AddIdentityServices(_config);
