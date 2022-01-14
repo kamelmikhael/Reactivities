@@ -1,7 +1,9 @@
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, runInAction } from "mobx";
 import agent from "../api/agent";
-import { Activity } from "../models/activity.model";
+import { Activity, ActivityFormValues } from "../models/activity.model";
 import { format } from 'date-fns';
+import { store } from "./store";
+import { Profile } from "../models/profile";
 
 export default class ActivityStore {
     activityRegistry = new Map<string, Activity>();
@@ -89,6 +91,15 @@ export default class ActivityStore {
     }
 
     private setActivity = (activity: Activity) => {
+        debugger;
+        const user = store.userStore.user;
+        if(user) {
+            activity.isGoing = activity.attendees!.some(
+                a => a.username === user.username
+            );
+            activity.isHost = activity.hostUsername === user.username;
+            activity.host = activity.attendees!.find(x => x.username === activity.hostUsername);
+        }
         activity.date = new Date(activity.date!); // activity.date.split('T')[0];
         this.setActivityRegistry(activity);
     }
@@ -97,35 +108,37 @@ export default class ActivityStore {
         return this.activityRegistry.get(id);
     }
 
-    createActivity = async (activity: Activity) => {
-        this.setLoading(true);
+    createActivity = async (activity: ActivityFormValues) => {
+        const user = store.userStore.user;
+        const attendee = new Profile(user!);
 
         try {
             await agent.Activities.create(activity);
+            
             // handle state after success
-            this.setActivityRegistry(activity);
-            this.setSelectedActivity(activity);
-            this.setEditMode(false);
+            const newActivity = new Activity(activity);
+            newActivity.hostUsername = user!.username;
+            newActivity.attendees = [attendee];
+
+            this.setActivity(newActivity);
+            this.setSelectedActivity(newActivity);
         } catch (error) {
             console.log(error);
-        } finally {
-            this.setLoading(false);
         }
     }
 
-    updateActivity = async (activity: Activity) => {
-        this.setLoading(true);
-
+    updateActivity = async (activity: ActivityFormValues) => {
         try {
             await agent.Activities.update(activity);
             // handle state after success
-            this.setActivityRegistry(activity);
-            this.setSelectedActivity(activity);
-            this.setEditMode(false);
+            if(activity.id) {
+                let updatedActivity = {...this.getActivity(activity.id), ...activity};
+                
+                this.setActivityRegistry(updatedActivity as Activity);
+                this.setSelectedActivity(updatedActivity as Activity);
+            }
         } catch (error) {
             console.log(error);
-        } finally {
-            this.setLoading(false);
         }
     }
 
@@ -136,6 +149,45 @@ export default class ActivityStore {
             await agent.Activities.delete(id);
             // handle state after success
             this.deleteActivityRegistry(id);
+        } catch (error) {
+            console.log(error);
+        } finally {
+            this.setLoading(false);
+        }
+    }
+
+    updateAttendance = async () => {
+        const user = store.userStore.user;
+        this.setLoading(true);
+        try {
+            await agent.Activities.attend(this.selectedActivity!.id);
+            runInAction(() => {
+                if(this.selectedActivity?.isGoing) {
+                    this.selectedActivity.attendees = this.selectedActivity.attendees?.filter(x => x.username !== user?.username);
+                    this.selectedActivity.isGoing = false;
+                } else {
+                    const attendee = new Profile(user!);
+                    this.selectedActivity?.attendees?.push(attendee);
+                    this.selectedActivity!.isGoing = true;
+                }
+                this.setActivityRegistry(this.selectedActivity!);
+            })
+        } catch (error) {
+            console.log(error);
+        } finally {
+            this.setLoading(false);
+        }
+    }
+
+    cancelActivityToggle = async () => {
+        this.setLoading(true);
+        try {
+            await agent.Activities.attend(this.selectedActivity!.id);
+
+            runInAction(() => {
+                this.selectedActivity!.isCancelled = !this.selectedActivity!.isCancelled;
+                this.activityRegistry.set(this.selectedActivity!.id, this.selectedActivity!);
+            })
         } catch (error) {
             console.log(error);
         } finally {
