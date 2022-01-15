@@ -1,0 +1,8 @@
+- react semantic ui
+- MobX - app state managment
+- .NET 5
+- Web API
+- Clean Architecture
+- AutoMapper
+- Cloudinary - upload images
+- Identity Mebership

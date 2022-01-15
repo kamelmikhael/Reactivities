@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Persistence;
+using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
 
 namespace API.Extensions
 {
@@ -22,6 +23,9 @@ namespace API.Extensions
                 var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
                 options.Filters.Add(new AuthorizeFilter(policy));
             })
+            .AddNewtonsoftJson(options =>
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            )
             .AddFluentValidation(config => {
                 config.RegisterValidatorsFromAssemblyContaining<ActivityCreateCommand>();
             });
