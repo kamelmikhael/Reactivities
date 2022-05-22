@@ -30,7 +30,7 @@ function App() {
     }
   }, [commonStore, userStore]);
 
-  if(!commonStore.appLoaded) return <Spinner content='Loading ...' />
+  if(!commonStore.appLoaded) return <Spinner />
 
   return (
     <Fragment>

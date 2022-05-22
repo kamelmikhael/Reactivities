@@ -6,7 +6,7 @@ interface Props {
     content?: string;
 }
 
-function Spinner({inverted = true, content = 'Loading...'}: Props) {
+function Spinner({inverted = true, content = 'Loading ...'}: Props) {
     return (
         <Dimmer active={true} inverted={inverted}>
             <Loader content={content} />

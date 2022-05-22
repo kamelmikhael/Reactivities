@@ -12,7 +12,7 @@ const sleep = (delay: number) => {
     });
 }
 
-axios.defaults.baseURL = 'http://localhost:5000/api';
+axios.defaults.baseURL = 'https://localhost:5001/api';
 
 
 // axios interceptors request for token and Authorization
@@ -89,6 +89,7 @@ const Account = {
     register: (user: UserFormValues) => requests.post<User>('/account/register', user),
 }
 
+// Profiles Controller methods
 const Profiles = {
     get: (username: string) => requests.get<Profile>(`/profiles/${username}`),
     uploadPhoto: (photo: Blob) => {

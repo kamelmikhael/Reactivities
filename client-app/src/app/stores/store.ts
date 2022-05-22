@@ -23,6 +23,7 @@ export const store: Store = {
 
 export const StoreContext = createContext(store);
 
+// custom react hook
 export function useStore() {
     return useContext(StoreContext);
 }
