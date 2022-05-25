@@ -9,13 +9,13 @@ import ActivityList from "./ActivityList";
 function ActivityDashboard () {
     
     const {activityStore} = useStore();
-    const {loadActivities, activityRegistry} = activityStore;
+    const {loadActivities, activityRegistry, loadingInitial} = activityStore;
 
     useEffect(() => {
         if(activityRegistry.size <= 1) loadActivities();
     }, [loadActivities, activityRegistry]);
 
-    if(activityStore.loadingInitial) return <Spinner content='Loading Actiivities...' />
+    if(loadingInitial) return <Spinner content='Loading Actiivities...' />
 
     return (
         <Grid>
