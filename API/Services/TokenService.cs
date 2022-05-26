@@ -29,13 +29,13 @@ namespace API.Services
                 new Claim(ClaimTypes.Email, user.Email),
             };
             
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["TokenKey"]));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:TokenKey"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddDays(7),
+                Expires = DateTime.Now.AddDays(Convert.ToDouble(_config["JWT:ExpiresAfter"])),
                 SigningCredentials = creds,
             };
             

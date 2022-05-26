@@ -38,9 +38,9 @@ export default class UserStore {
         history.push('/');
     }
 
-    getUser = async () => {
+    getCurrentLoggedInUser = async () => {
         try {
-            const user = await agent.Account.current();
+            const user = await agent.Account.currentUser();
             this.setUser(user);
         } catch (error) {
             console.log(error);

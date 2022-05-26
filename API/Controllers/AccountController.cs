@@ -74,7 +74,7 @@ namespace API.Controllers
         }
 
         [Authorize]
-        [HttpPost]
+        [HttpPost("current-user")]
         public async Task<ActionResult<UserDto>> GetCurrentUser()
         {
             var user = await _userManager.Users.Include(x => x.Photos)

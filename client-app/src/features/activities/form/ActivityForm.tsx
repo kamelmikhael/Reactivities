@@ -25,6 +25,7 @@ function ActivityForm() {
 
     const [activity, setActivity] = useState<ActivityFormValues>(new ActivityFormValues());
 
+    // configure validation of your from here
     const validationSchema = Yup.object({
         title: Yup.string().required('The activity title is required.'),
         description: Yup.string().required('The activity description is required.'),

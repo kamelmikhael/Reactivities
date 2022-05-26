@@ -84,7 +84,7 @@ const Activities = {
 
 // Account Controller methods
 const Account = {
-    current: () => requests.get<User>('/account'),
+    currentUser: () => requests.post<User>('/account/current-user', {}),
     login: (user: UserFormValues) => requests.post<User>('/account/login', user),
     register: (user: UserFormValues) => requests.post<User>('/account/register', user),
 }

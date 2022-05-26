@@ -5,11 +5,12 @@ import { useStore } from "../../stores/store";
 
 function ModalContainer() {
     const {modalStore} = useStore();
+    const {modal, closeModal} = modalStore;
 
     return (
-        <Modal open={modalStore.modal.open} onClose={modalStore.closeModal} size="mini" >
+        <Modal open={modal.open} onClose={closeModal} size="mini" >
             <Modal.Content>
-                {modalStore.modal.body}
+                {modal.body}
             </Modal.Content>
         </Modal>
     );

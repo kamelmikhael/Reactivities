@@ -29,7 +29,7 @@ export default class CommonStore {
         this.token = token;
     }
 
-    setAppLoaded = () => {
-        this.appLoaded = true;
+    setAppLoaded = (status: boolean) => {
+        this.appLoaded = status;
     }
 }

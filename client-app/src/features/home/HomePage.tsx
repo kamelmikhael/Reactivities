@@ -25,10 +25,10 @@ function HomePage() {
                     </>
                 ) : (
                     <>
-                        <Button onClick={() => modalStore.openMoadl(<LoginForm />)} size="huge" inverted >
+                        <Button onClick={() => modalStore.openModal(<LoginForm />)} size="huge" inverted >
                             Login!
                         </Button>
-                        <Button onClick={() => modalStore.openMoadl(<RegisterForm />)} size="huge" inverted >
+                        <Button onClick={() => modalStore.openModal(<RegisterForm />)} size="huge" inverted >
                             Register
                         </Button>
                     </>

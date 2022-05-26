@@ -13,13 +13,16 @@ function RegisterForm() {
     return (
         <Formik
             initialValues={{displayName: '', username: '', email: '', password: '', error: null}}
-            onSubmit={(values, {setErrors}) => userStore.register(values).catch(error => 
-                setErrors({error}))}
+            onSubmit={(values, {setErrors}) => userStore.register(values).catch(error => {
+                    console.log(error);
+                    setErrors({error});
+                } 
+            )}
             validationSchema={Yup.object({
-                displayName: Yup.string().required(),
-                username: Yup.string().required(),
-                email: Yup.string().required().email(),
-                password: Yup.string().required(),
+                displayName: Yup.string().required('This field is required'),
+                username: Yup.string().required('This field is required'),
+                email: Yup.string().required('This field is required').email('Must be a valid email address'),
+                password: Yup.string().required('This field is required'),
             })}
         >
             {({handleSubmit, isSubmitting, errors, isValid, dirty}) => (

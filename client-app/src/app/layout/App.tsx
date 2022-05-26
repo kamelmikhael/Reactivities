@@ -24,9 +24,9 @@ function App() {
 
   useEffect(() => {
     if(commonStore.token) {
-      userStore.getUser().finally(() => commonStore.setAppLoaded());
+      userStore.getCurrentLoggedInUser().finally(() => commonStore.setAppLoaded(true));
     } else {
-      commonStore.setAppLoaded();
+      commonStore.setAppLoaded(true);
     }
   }, [commonStore, userStore]);
 
@@ -35,6 +35,7 @@ function App() {
   return (
     <Fragment>
       <ToastContainer position='top-right' />
+      
       <ModalContainer />
 
       <Route exact path='/' component={HomePage} />
