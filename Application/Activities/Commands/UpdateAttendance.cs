@@ -37,26 +37,29 @@ namespace Application.Activities.Commands
                     .Include(x => x.Attendees).ThenInclude(x => x.AppUser)
                     .SingleOrDefaultAsync(x => x.Id == request.Id);
                 
-                if(activity == null) return null;
+                if(activity == null) return null; // Not-Found result
 
                 var user = await _context.Users.FirstOrDefaultAsync(x => x.UserName == _userAccessor.GetUsername());
 
-                if(user == null) return null;
+                if(user == null) return null; // Not-Found result
 
                 var hostUserName = activity.Attendees.FirstOrDefault(x => x.IsHost)?.AppUser?.UserName;
 
                 var attandance = activity.Attendees.FirstOrDefault(x => x.AppUser.UserName == user.UserName);
 
+                // if user is the host and is an attandance
                 if(attandance != null && hostUserName == user.UserName) 
                 {
                     activity.IsCancelled = !activity.IsCancelled;
                 }
 
+                // if user is not the host but is an attandance
                 if(attandance != null && hostUserName != user.UserName) 
                 {
                     activity.Attendees.Remove(attandance);
                 }
 
+                // if user is not an attandance
                 if(attandance == null)
                 {
                     attandance = new ActivityAttendee
