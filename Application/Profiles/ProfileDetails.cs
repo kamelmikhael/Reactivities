@@ -1,9 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Core;
+using Application.Dtos;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using MediatR;
@@ -14,12 +12,12 @@ namespace Application.Profiles
 {
     public class ProfileDetails
     {
-        public class Query : IRequest<Result<Profile>>
+        public class Query : IRequest<Result<ProfileDto>>
         {
             public string Username { get; set; }
         }
 
-        public class Handler : IRequestHandler<Query, Result<Profile>>
+        public class Handler : IRequestHandler<Query, Result<ProfileDto>>
         {
             private readonly IMapper _mapper;
             private readonly DataContext _context;
@@ -30,13 +28,13 @@ namespace Application.Profiles
                 _mapper = mapper;        
             }
 
-            public async Task<Result<Profile>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<ProfileDto>> Handle(Query request, CancellationToken cancellationToken)
             {
                 var user = await _context.Users
-                    .ProjectTo<Profile>(_mapper.ConfigurationProvider)
+                    .ProjectTo<ProfileDto>(_mapper.ConfigurationProvider)
                     .FirstOrDefaultAsync(x => x.Username == request.Username);
 
-                return user == null ? null : Result<Profile>.Success(user);
+                return user == null ? null : Result<ProfileDto>.Success(user);
             }
         }
     }

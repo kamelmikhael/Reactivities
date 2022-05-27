@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -45,15 +43,15 @@ namespace Application.Photos.Commands
 
                 if(photo.IsMain) return Result<Unit>.Failure("You can not delete your main photo.");
 
-                var result = await _photoAccessor.DeletePhoto(request.Id);
+                var cloudDeleteResult = await _photoAccessor.DeletePhoto(request.Id);
 
-                if(result == null) return Result<Unit>.Failure("Problem deleting photo from Cloudinary.");
+                if(cloudDeleteResult == null) return Result<Unit>.Failure("Problem deleting photo from Cloudinary.");
 
                 user.Photos.Remove(photo);
 
-                var success = await _context.SaveChangesAsync() > 0;
+                var databaseDeleteSuccess = await _context.SaveChangesAsync() > 0;
 
-                return success ? Result<Unit>.Success(Unit.Value) : Result<Unit>.Failure("Problem deleting photo from API.");
+                return databaseDeleteSuccess ? Result<Unit>.Success(Unit.Value) : Result<Unit>.Failure("Problem deleting photo from Database.");
             }
         }
     }

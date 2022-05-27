@@ -183,10 +183,8 @@ export default class ActivityStore {
         try {
             await agent.Activities.attend(this.selectedActivity!.id);
 
-            runInAction(() => {
-                this.selectedActivity!.isCancelled = !this.selectedActivity!.isCancelled;
-                this.activityRegistry.set(this.selectedActivity!.id, this.selectedActivity!);
-            })
+            this.selectedActivity!.isCancelled = !this.selectedActivity!.isCancelled;
+            this.setActivityRegistry(this.selectedActivity!);
         } catch (error) {
             console.log(error);
         } finally {

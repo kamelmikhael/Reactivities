@@ -21,7 +21,7 @@ function ActivityDetailedSidebar ({activity: {attendees, host}}: Props) {
                 inverted
                 color='teal'
             >
-                {attendees.length} {attendees.length === 1 ? 'Person' : 'People' } Going
+                {attendees.length} {attendees.length === 1 ? 'Person' : 'People' } going
             </Segment>
             <Segment attached>
                 <List relaxed divided>
