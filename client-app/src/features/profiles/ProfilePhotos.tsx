@@ -56,7 +56,7 @@ function ProfilePhotos({profile}: Props) {
                                                 content='Main'
                                                 name={'main' + photo.id}
                                                 disabled={photo.isMain}
-                                                loading={target === 'main' + photo.id && loading}
+                                                loading={(target === `main${photo.id}`) && loading}
                                                 onClick={e => handleSetMainPhoto(photo, e)}
                                             />
                                             <Button 

@@ -20,24 +20,36 @@ export default class ProfileStore {
         return false;
     }
 
+    setProfile = (status: Profile | null) => {
+        this.profile = status;
+    }
+
+    setLoadingProfile = (status: boolean) => {
+        this.loadingProfile = status;
+    }
+
+    setUploading = (status: boolean) => {
+        this.uploading = status;
+    }
+
+    setLoading = (status: boolean) => {
+        this.loading = status;
+    }
+
     loadProfile =async (username: string) => {
-        this.loadingProfile = true;
+        this.setLoadingProfile(true);
         try {
             const profile = await agent.Profiles.get(username);
-            runInAction(() => {
-               this.profile = profile; 
-            });
+            this.setProfile(profile);
         } catch (error) {
             console.log(error);
         } finally {
-            runInAction(() => {
-                this.loadingProfile = false;
-            })
+            this.setLoadingProfile(false);
         }
     }
 
     uploadPhoto =async (photo: Blob) => {
-        this.uploading = true;
+        this.setUploading(true);
         try {
             const response = await agent.Profiles.uploadPhoto(photo);
             const uploadedPhoto = response.data;
@@ -54,14 +66,12 @@ export default class ProfileStore {
         } catch (error) {
             console.log(error);
         } finally {
-            runInAction(() => {
-                this.uploading = false;
-            });
+            this.setUploading(false);
         }
     }
 
     setMainPhoto = async (photo: Photo) => {
-        this.loading = true;
+        this.setLoading(true);
         try {
             await agent.Profiles.setMainPhoto(photo.id);
             store.userStore.setMainImage(photo.url);
@@ -75,14 +85,12 @@ export default class ProfileStore {
         } catch (error) {
             console.log(error);
         } finally {
-            runInAction(() => {
-                this.loading = false;
-            })
+            this.setLoading(false);
         }
     }
 
     deletePhoto = async (photo: Photo) => {
-        this.loading = true;
+        this.setLoading(true);
         try {
             await agent.Profiles.deletePhoto(photo.id);
             runInAction(() => {
@@ -93,9 +101,7 @@ export default class ProfileStore {
         } catch (error) {
             console.log(error);
         } finally {
-            runInAction(() => {
-                this.loading = false;
-            })
+            this.setLoading(false);
         }
     }
 }
