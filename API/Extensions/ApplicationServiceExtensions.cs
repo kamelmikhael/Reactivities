@@ -37,11 +37,23 @@ namespace API.Extensions
             services.AddDbContext<DataContext>(optopns => {
                 optopns.UseSqlite(config.GetConnectionString("DefaultConnection"));
             });
-            services.AddCors();
+            services.AddCors(options => 
+            {
+                options.AddPolicy("CorsPolicy", policy => 
+                {
+                    policy
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials()
+                        .WithOrigins("http://localhost:3000");
+                });
+            });
 
             services.AddScoped<IUserAccessor, UserAccessor>();
             services.AddScoped<IPhotoAccessor, PhotoAccessor>();
             services.Configure<CloudinarySettings>(config.GetSection("Cloudinary"));
+
+            services.AddSignalR();
 
             return services;
         }

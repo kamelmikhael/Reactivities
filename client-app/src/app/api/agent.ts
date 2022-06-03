@@ -4,6 +4,7 @@ import { history } from "../..";
 import { environment } from "../../environment";
 import { Activity, ActivityFormValues } from "../models/activity.model";
 import { Photo, Profile } from "../models/profile";
+import { ProfileUpdate } from "../models/profileUpdate.model";
 import { User, UserFormValues } from "../models/user.model";
 import { store } from "../stores/store";
 
@@ -101,6 +102,7 @@ const Profiles = {
     },
     setMainPhoto: (id: string) => requests.post(`/photos/${id}/setMain`, {}),
     deletePhoto: (id: string) => requests.delete(`/photos/${id}`),
+    updateProfile: (profile: ProfileUpdate) => requests.put(`/profiles`, profile),
 } 
 
 const agent = {
