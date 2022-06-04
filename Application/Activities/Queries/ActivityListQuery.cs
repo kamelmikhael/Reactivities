@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Application.Core;
 using Application.Dtos;
+using Application.Interfaces;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using MediatR;
@@ -18,18 +19,19 @@ namespace Application.Activities.Queries
     {
         private readonly DataContext _context;
         private readonly IMapper _mapper;
+        private readonly IUserAccessor _userAccessor;
         
-        public ActivityListQueryHandler(DataContext context, IMapper mapper)
+        public ActivityListQueryHandler(DataContext context, IMapper mapper, IUserAccessor userAccessor)
         {
             _context = context;
             _mapper = mapper;
+            _userAccessor = userAccessor;
         }
 
         public async Task<Result<List<ActivityDto>>> Handle(ActivityListQuery request, CancellationToken cancellationToken)
         {
             var activities = await _context.Activities
-                //.Include(x => x.Attendees).ThenInclude(x => x.AppUser)
-                .ProjectTo<ActivityDto>(_mapper.ConfigurationProvider)
+                .ProjectTo<ActivityDto>(_mapper.ConfigurationProvider, new { currentUsername = _userAccessor.GetUsername()})
                 .ToListAsync(cancellationToken);
             return Result<List<ActivityDto>>.Success(activities);
         }
