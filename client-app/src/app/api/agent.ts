@@ -3,7 +3,8 @@ import { toast } from "react-toastify";
 import { history } from "../..";
 import { environment } from "../../environment";
 import { Activity, ActivityFormValues } from "../models/activity.model";
-import { Photo, Profile } from "../models/profile";
+import { PaginatedResult, Pagination } from "../models/pagination.model";
+import { Photo, Profile, UserActivity } from "../models/profile";
 import { ProfileUpdate } from "../models/profileUpdate.model";
 import { User, UserFormValues } from "../models/user.model";
 import { store } from "../stores/store";
@@ -26,6 +27,14 @@ axios.interceptors.request.use(config => {
 // axios interceptors response for error handling
 axios.interceptors.response.use(async (response) => {
     await sleep(1000);
+
+    // if pagination header come with response
+    const pagination = response.headers['pagination'];
+    if(pagination) {
+        response.data = new PaginatedResult(response.data, JSON.parse(pagination) as Pagination);
+        return response as AxiosResponse<PaginatedResult<any>>;
+    }
+
     return response;
 }, (error: AxiosError) => {
     const {data, status, config} = error.response!;
@@ -68,6 +77,7 @@ const responseBody = <T> (response: AxiosResponse<T>) => response.data;
 
 const requests = {
     get: <T> (url: string) => axios.get<T>(url).then(responseBody),
+    getPaged: <T> (url: string, params: URLSearchParams) => axios.get<T>(url, {params}).then(responseBody),
     post: <T> (url: string, body: {}) => axios.post<T>(url, body).then(responseBody),
     put: <T> (url: string, body: {}) => axios.put<T>(url, body).then(responseBody),
     delete: <T> (url: string) => axios.delete<T>(url).then(responseBody),
@@ -75,7 +85,7 @@ const requests = {
 
 // Activities Controller methods
 const Activities = {
-    list: () => requests.get<Activity[]>('/activities'),
+    list: (params: URLSearchParams) => requests.getPaged<PaginatedResult<Activity[]>>('/activities', params),
     details: (id: string) => requests.get<Activity>(`/activities/${id}`),
     create: (activity: ActivityFormValues) => requests.post<void>(`/activities`, activity),
     update: (activity: ActivityFormValues) => requests.put<void>(`/activities/${activity.id}`, activity),
@@ -104,7 +114,8 @@ const Profiles = {
     deletePhoto: (id: string) => requests.delete(`/photos/${id}`),
     updateProfile: (profile: ProfileUpdate) => requests.put(`/profiles`, profile),
     updateFollowing: (username: string) => requests.post(`/follow/${username}`, {}),
-    getFollowings: (username: string, predicate: string) => requests.get<Profile[]>(`/follow/${username}?predicate=${predicate}`)
+    getFollowings: (username: string, predicate: string) => requests.get<Profile[]>(`/follow/${username}?predicate=${predicate}`),
+    listActivities: (username: string, predicate?: string) => requests.get<UserActivity[]>(`/profiles/${username}/activities?predicate=${predicate}`),
 } 
 
 const agent = {
