@@ -1,7 +1,6 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { toast } from "react-toastify";
 import { history } from "../..";
-import { environment } from "../../environment";
 import { Activity, ActivityFormValues } from "../models/activity.model";
 import { PaginatedResult, Pagination } from "../models/pagination.model";
 import { Photo, Profile, UserActivity } from "../models/profile";
@@ -15,7 +14,7 @@ const sleep = (delay: number) => {
     });
 }
 
-axios.defaults.baseURL = environment.apiBaseUrl;
+axios.defaults.baseURL = process.env.REACT_APP__API_URL;
 
 // axios interceptors request for token and Authorization
 axios.interceptors.request.use(config => {
@@ -26,7 +25,9 @@ axios.interceptors.request.use(config => {
 
 // axios interceptors response for error handling
 axios.interceptors.response.use(async (response) => {
-    await sleep(1000);
+    if(process.env.NODE_ENV === 'development') {
+        await sleep(1000);
+    }
 
     // if pagination header come with response
     const pagination = response.headers['pagination'];

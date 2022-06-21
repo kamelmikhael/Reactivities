@@ -2,10 +2,9 @@ import React, { useState } from 'react';
 import {Button, Header, Segment} from "semantic-ui-react";
 import axios from 'axios';
 import ValidationErrors from './ValidationErrors';
-import { environment } from '../../environment';
 
 export default function TestErrors() {
-    axios.defaults.baseURL = `${environment.apiBaseUrl}/`;
+    axios.defaults.baseURL = `${process.env.REACT_APP__API_URL}/`;
     const [errors, setErrors] = useState<string[] | null>(null);
 
     function handleNotFound() {

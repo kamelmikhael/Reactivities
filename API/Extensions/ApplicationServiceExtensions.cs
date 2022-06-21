@@ -10,7 +10,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Persistence;
-using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
 
 namespace API.Extensions
 {
@@ -34,8 +33,9 @@ namespace API.Extensions
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
             });
-            services.AddDbContext<DataContext>(optopns => {
-                optopns.UseSqlite(config.GetConnectionString("DefaultConnection"));
+            services.AddDbContext<DataContext>(opt => {
+                opt.UseSqlite(config.GetConnectionString("DefaultConnection"));
+                //opt.UseNpgsql(config.GetConnectionString("PostgresDefaultConnection"));
             });
             services.AddCors(options => 
             {
